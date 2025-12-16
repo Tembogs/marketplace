@@ -1,4 +1,4 @@
-import prisma from "../config/prisma";
+import prisma from "../../config/prisma.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -14,7 +14,7 @@ export class AuthService {
     if (existing) throw new Error("Email already in use");
 
     const passwordHash = await bcrypt.hash(password, 10);
-    const user = await await prisma.user.create({
+    const user = await prisma.user.create({
       data: {email, passwordHash, role}
     })
 
