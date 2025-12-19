@@ -2,6 +2,7 @@ import prisma from "../../config/prisma.js"
 import { RequestStatus } from "@prisma/client"
 import { allowedTransitions } from "./request.state.js"
 
+
 export class RequestService{
   static async createRequest(userId: string) {
     return prisma.supportRequest.create({
@@ -42,15 +43,35 @@ export class RequestService{
           throw new Error("Unauthorised to close request");
         }
 
-        return txt.supportRequest.update({
+        const updatedRequest = txt.supportRequest.update({
           where: {id: requestedId},
           data:{
             status:nextStatus,
-            expertId:nextStatus === "ACCEPTED" ? userId :request.expertId,
-            acceptedAt: nextStatus === "ACCEPTED" ? new Date() : request.acceptedAt,
-            closedAt: nextStatus === 'ACCEPTED' ? new Date() : request.closedAt
+            expertId:nextStatus === "ACCEPTED" 
+                      ? userId 
+                      :request.expertId,
+            
+            acceptedAt: nextStatus === "ACCEPTED" 
+                          ? new Date() 
+                          : request.acceptedAt,
+            
+            closedAt: nextStatus === 'CLOSED' 
+                          ? new Date() 
+                          : request.closedAt
           }
         })
+
+        // making the expert available after chat closed
+
+        if(
+          nextStatus === "CLOSED" && request?.expertId
+        ){
+          await txt.expertProfile.update({
+            where:{userId: request.expertId},
+            data:{isAvailable: true}
+          })
+        }
+        return updatedRequest
     })
   }
 }

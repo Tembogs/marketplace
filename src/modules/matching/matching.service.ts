@@ -1,0 +1,53 @@
+import prisma from "../../config/prisma.js"
+import { RequestStatus, Role } from "@prisma/client"
+
+
+export class MatchingService {
+  // getting available expert
+
+  static async findavailableExpert() {
+   return prisma.expertProfile.findFirst({
+    where:{isAvailable:true,
+            user:{
+              role:Role.EXPERT
+            }
+    },
+    orderBy:{
+      rating:"desc"
+    }
+   })
+  }
+
+  // getting available expert to chat request
+
+  static async assignExpertToRequest(requestId:string) {
+    return prisma.$transaction(async (tx) => {
+      const expert = await tx.expertProfile.findFirst({
+        where:{isAvailable: true},
+        include:{user: true}
+      })
+
+      if(!expert) {
+        throw new Error ("No expert available");
+      }
+
+      // assigning expert and locking the assignment
+
+      const request = await tx.supportRequest.update({
+        where:{id: requestId},
+        data: {
+          expertId:expert.userId,
+          status:RequestStatus.ACCEPTED,
+          acceptedAt:new Date()
+        }
+      });
+
+      await tx.expertProfile.update({
+      where:{id: expert.id},
+      data: {isAvailable: false}
+      })
+      return request;
+    })
+    
+  }
+}
