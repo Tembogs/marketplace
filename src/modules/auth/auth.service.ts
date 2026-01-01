@@ -1,4 +1,4 @@
-import prisma from "../../config/prisma.js";
+import prisma from "../../config/prisma";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -8,14 +8,27 @@ export class AuthService {
   static async register(
     email:string, 
     password:string,
-    role: "USER" | "EXPERT"
+    role: "USER" | "EXPERT",
+    
   ) {
     const existing = await prisma.user.findUnique({where: {email}});
     if (existing) throw new Error("Email already in use");
 
     const passwordHash = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
-      data: {email, passwordHash, role}
+      data: {
+        email, 
+        passwordHash, 
+        role,
+        expertProfile: role === "EXPERT" 
+        ? {
+        create: {
+          bio: "Welcome! Please update your bio.", // Default bio
+          isAvailable: true,
+          rating: 0
+        }
+      } : undefined
+      }
     })
 
     const token = jwt.sign({userId: user.id, role: user.role}, JWT_SECRET, {expiresIn: "7d"})

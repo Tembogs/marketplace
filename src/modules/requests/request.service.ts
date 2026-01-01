@@ -1,6 +1,6 @@
-import prisma from "../../config/prisma.js"
+import prisma from "../../config/prisma"
 import { RequestStatus } from "@prisma/client"
-import { allowedTransitions } from "./request.state.js"
+import { allowedTransitions } from "./request.state"
 
 
 export class RequestService{
@@ -73,5 +73,121 @@ export class RequestService{
         }
         return updatedRequest
     })
+  }
+
+  // expert seeing request
+  static async getOpenRequests() {
+  return prisma.supportRequest.findMany({
+    where: { 
+      status: "REQUESTED",
+      expertId: null 
+    },
+    include: {
+      user: { select: { email: true } } // Show who needs help
+    }
+  });
+}
+
+static async acceptRequest(requestId: string, expertId: string) {
+  return prisma.$transaction(async (tx) => {
+    // 1. Check if the request is still available
+    const request = await tx.supportRequest.findUnique({
+      where: { id: requestId }
+    });
+
+    if (!request || request.status !== "REQUESTED") {
+      throw new Error("Request is no longer available");
+    }
+
+    // 2. Assign the expert and update status
+    const updated = await tx.supportRequest.update({
+      where: { id: requestId },
+      data: {
+        status: "ACCEPTED",
+        expertId: expertId,
+        acceptedAt: new Date()
+      }
+    });
+
+    // 3. Set the expert to "Busy"
+    await tx.expertProfile.upsert({
+      where: { userId: expertId },
+      update: { isAvailable: false },
+      create: { 
+        userId: expertId, 
+        isAvailable: false,
+        bio: "New Expert" // Provide defaults for required fields
+      }
+});
+
+    return updated;
+  });
+}
+
+static async rejectRequest(requestId: string) {
+  return prisma.supportRequest.update({
+    where: { id: requestId },
+    data: { status: "CANCELLED" }
+  });
+}
+
+static async closeRequest(requestId: string, expertId: string) {
+  return prisma.$transaction(async (tx) => {
+    // 1. Check if the request is still available
+    const request = await tx.supportRequest.findUnique({
+      where: { id: requestId }
+    });
+
+    if (!request || request.status !== "ACCEPTED") {
+      throw new Error("Request cannot be closed");
+    }
+
+    // 2. expert closes the chat
+    const updated = await tx.supportRequest.update({
+      where: { id: requestId },
+      data: {
+        status: "CLOSED",
+        expertId: expertId,
+        closedAt: new Date()
+      }
+    });
+});
+}
+
+static async getAcceptedRequests(userId?: string, role?: string,) {
+    return prisma.supportRequest.findMany({
+      where: {
+        status: "ACCEPTED",
+        // If a userId is provided, filter by their role
+        ...(userId && role === "USER" ? { userId } : {}),
+        ...(userId && role === "EXPERT" ? { expertId: userId } : {}),
+      },
+      include: {
+        user: { select: { email: true } },
+        expert: { select: { email: true } },
+      },
+      orderBy: {
+        acceptedAt: 'desc' // Most recent first
+      }
+    });
+  }
+
+
+  static async getClosedRequests(userId?: string, role?: string,) {
+    return prisma.supportRequest.findMany({
+      where: {
+        status: "CLOSED",
+        // If a userId is provided, filter by their role
+        ...(userId && role === "USER" ? { userId } : {}),
+        ...(userId && role === "EXPERT" ? { expertId: userId } : {}),
+      },
+      include: {
+        user: { select: { email: true } },
+        expert: { select: { email: true } },
+      },
+      orderBy: {
+        closedAt: 'desc' // Most recent first
+      }
+    });
   }
 }

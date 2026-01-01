@@ -1,7 +1,7 @@
 import { Response } from "express";
-import prisma from "#config/prisma.js";
-import { AuthRequest } from "../../middlewares/auth.middleware.js";
+import { AuthRequest } from "../../middlewares/auth.middleware";
 import { RequestStatus } from "@prisma/client";
+import prisma from "../../config/prisma";
 
 export class AdminController {
   // having access to request

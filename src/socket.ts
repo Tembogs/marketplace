@@ -1,7 +1,7 @@
 import { Server } from "socket.io";
 import http from "http";
-import { verifyToken } from "./middlewares/jwt.js";
-import prisma  from "./config/prisma.js";
+import { verifyToken } from "./middlewares/jwt";
+import prisma  from "./config/prisma";
 import { RequestStatus } from "@prisma/client";
 
 

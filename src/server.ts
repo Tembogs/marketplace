@@ -1,12 +1,14 @@
-import { app } from "./app.js";
+import "dotenv/config";
+import { app } from "./app";
 import http from "http";
-import { intheSocket } from "./socket.js";
+import { intheSocket } from "./socket";
+ 
 
 
 const server = http.createServer(app);
 intheSocket(server)
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

@@ -1,0 +1,51 @@
+import prisma from "../../config/prisma";
+
+export class MessageService {
+  static async sendMessage(requestId: string, senderId: string, content: string) {
+    //  Verify the request exists and the sender is the User or the assigned Expert
+    const request = await prisma.supportRequest.findUnique({
+      where: { id: requestId },
+    });
+
+    if (!request) throw new Error("Support request not found");
+    
+    if (request.userId !== senderId && request.expertId !== senderId) {
+      throw new Error("Unauthorized: You are not part of this session");
+    }
+
+    if (request.status === "CLOSED") {
+      throw new Error("Cannot send messages to a closed request");
+    }
+
+    //  Create the message
+    return prisma.message.create({
+      data: {
+        requestId,
+        senderId,
+        content,
+      },
+      include: {
+        sender: { select: { email: true, role: true } }
+      }
+    });
+  }
+
+  static async getMessages(requestId: string, userId: string) {
+    // Security check: only the involved parties can see the history
+    const request = await prisma.supportRequest.findUnique({
+      where: { id: requestId }
+    });
+
+    if (request?.userId !== userId && request?.expertId !== userId) {
+      throw new Error("Unauthorized access to messages");
+    }
+
+    return prisma.message.findMany({
+      where: { requestId },
+      orderBy: { createdAt: 'asc' },
+      include: {
+        sender: { select: { email: true, role: true } }
+      }
+    });
+  }
+}
