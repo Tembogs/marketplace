@@ -2,6 +2,7 @@ import { Response } from "express";
 import { AuthRequest } from "../../middlewares/auth.middleware";
 import { RequestStatus } from "@prisma/client";
 import prisma from "../../config/prisma";
+import { AdminService } from "./admin.services";
 
 export class AdminController {
   // having access to request
@@ -49,24 +50,51 @@ export class AdminController {
   }
 
   // see all the expert stats
-    static async expertStats(req: AuthRequest, res:Response){
-      const stats = await prisma.expertProfile.findMany({
-        include: {
-          user:{
-            include:{
-              assigned:true
+    static async expertStats(req: AuthRequest, res: Response) {
+  try {
+    const stats = await prisma.expertProfile.findMany({
+      include: {
+        user: {
+          select: {
+            email: true,
+            _count: {
+              select: { assigned: true }
             }
           }
         }
-      })
+      }
+    });
 
-      const result = stats.map((expert) => ({
-        expertId: expert.userId,
-        name: expert.user.email,
-        totalSessions: expert.user.assigned.length,
-        available: expert.isAvailable,
-        rating: expert.rating
-      }))
-      res.json(result)
+    const result = stats.map((expert) => ({
+      expertId: expert.userId,
+      email: expert.user.email,
+      totalSessions: expert.user._count.assigned, 
+      available: expert.isAvailable,
+      rating: expert.rating
+    }));
+
+    res.json(result);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+    static async promote(req: AuthRequest, res: Response) {
+    try {
+      const { userId } = req.body;
+      const updatedUser = await AdminService.promoteToExpert(userId);
+      res.json({ message: "User promoted to EXPERT successfully", user: updatedUser });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
     }
+  }
+
+  static async getDashboard(req: AuthRequest, res: Response) {
+    try {
+      const stats = await AdminService.getSystemStats();
+      res.json(stats);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
 }

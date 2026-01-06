@@ -1,14 +1,15 @@
+import express from "express";
+import { createServer } from "http";
+import {intheSocket}  from "./socket";
 import "dotenv/config";
-import { app } from "./app";
-import http from "http";
-import { intheSocket } from "./socket";
- 
 
+const app = express();
+const httpServer = createServer(app);
 
-const server = http.createServer(app);
-intheSocket(server)
+// Initialize Socket.io and export it if needed elsewhere
+export const io = intheSocket(httpServer);
+
 const PORT = process.env.PORT || 3001;
-
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+httpServer.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });

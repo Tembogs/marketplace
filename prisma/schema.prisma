@@ -14,15 +14,19 @@ model User {
   id              String   @id @default(uuid())
   email           String   @unique
   passwordHash    String
-  role            Role
+  role            Role     @default(USER)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  isOnline        Boolean  @default(false)
+  reviewsReceived Review[] @relation("ExpertReviews")
+  reviewsGiven    Review[] @relation("UserReviews")
 
   requests        SupportRequest[] @relation("UserRequests")
   assigned        SupportRequest[] @relation("ExpertRequests")
   messages        Message[]
   expertProfile   ExpertProfile?
 }
+
 
 model Skill {
   id      String @id @default(uuid())
@@ -51,11 +55,25 @@ model SupportRequest {
   createdAt    DateTime @default(now())
   acceptedAt   DateTime?
   closedAt     DateTime?
+  review       Review?
 
   user         User     @relation("UserRequests", fields: [userId], references: [id])
   expert       User?    @relation("ExpertRequests", fields: [expertId], references: [id])
   messages     Message[]
   session      Session?
+}
+
+model Review {
+  id          String   @id @default(uuid())
+  rating      Int      // 1 to 5
+  comment     String?
+  requestId   String   @unique
+  request     SupportRequest @relation(fields: [requestId], references: [id])
+  expertId    String
+  expert      User     @relation("ExpertReviews", fields: [expertId], references: [id])
+  reviewerId  String
+  reviewer    User     @relation("UserReviews", fields: [reviewerId], references: [id])
+  createdAt   DateTime @default(now())
 }
 
 model Message {
@@ -90,4 +108,5 @@ enum RequestStatus {
   ACTIVE
   CLOSED
   CANCELLED
+  COMPLETED
 }

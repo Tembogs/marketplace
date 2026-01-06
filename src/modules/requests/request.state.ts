@@ -5,6 +5,7 @@ export const allowedTransitions: Record<RequestStatus, RequestStatus[]> = {
   ACCEPTED: ["ACTIVE", "CANCELLED"],
   ACTIVE: ["CLOSED"],
   CLOSED:[],
-  CANCELLED:[]
+  CANCELLED:[],
+  COMPLETED: []
 }
 

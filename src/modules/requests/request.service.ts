@@ -133,25 +133,31 @@ static async rejectRequest(requestId: string) {
 
 static async closeRequest(requestId: string, expertId: string) {
   return prisma.$transaction(async (tx) => {
-    // 1. Check if the request is still available
     const request = await tx.supportRequest.findUnique({
       where: { id: requestId }
     });
 
-    if (!request || request.status !== "ACCEPTED") {
+    if (!request || (request.status !== "ACCEPTED" && request.status !== "ACTIVE")) {
       throw new Error("Request cannot be closed");
     }
 
-    // 2. expert closes the chat
+    // Update the request
     const updated = await tx.supportRequest.update({
       where: { id: requestId },
       data: {
         status: "CLOSED",
-        expertId: expertId,
         closedAt: new Date()
       }
     });
-});
+
+    // Make the expert available again!
+    await tx.expertProfile.update({
+      where: { userId: expertId },
+      data: { isAvailable: true }
+    });
+
+    return updated;
+  });
 }
 
 static async getAcceptedRequests(userId?: string, role?: string,) {

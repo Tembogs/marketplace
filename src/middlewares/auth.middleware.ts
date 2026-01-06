@@ -12,7 +12,6 @@ export const authMiddleware = (roles: string[] = []) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) return res.status(401).json({ message: "Not Authorized" });
 
-    // FIX: Split by a SPACE ' ' not an empty string ''
     const token = authHeader.split(' ')[1]; 
 
     if (!token) return res.status(401).json({ message: "Token missing" });
@@ -25,7 +24,7 @@ export const authMiddleware = (roles: string[] = []) => {
         return res.status(403).json({ message: "Forbidden: Insufficient permissions" });
       }
 
-      next(); // Don't forget to call next() to move to the controller!
+      next(); 
     } catch (error) {
       return res.status(401).json({ message: "Invalid or expired token" });
     }

@@ -1,5 +1,5 @@
 import prisma from "../../config/prisma";
-
+import { io } from "../../server";
 export class MessageService {
   static async sendMessage(requestId: string, senderId: string, content: string) {
     //  Verify the request exists and the sender is the User or the assigned Expert
@@ -18,7 +18,7 @@ export class MessageService {
     }
 
     //  Create the message
-    return prisma.message.create({
+    const message = await prisma.message.create({
       data: {
         requestId,
         senderId,
@@ -28,6 +28,8 @@ export class MessageService {
         sender: { select: { email: true, role: true } }
       }
     });
+    
+    io.to(requestId).emit("new-message", message);
   }
 
   static async getMessages(requestId: string, userId: string) {

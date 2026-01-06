@@ -94,4 +94,25 @@ export function intheSocket(server: http.Server) {
       console.log("Socket disconnected")
     })
   })
+
+  io.on("connection", async (socket) => {
+  const userId = socket.data.user.userId;
+
+  // 1. Mark User as Online
+  await prisma.user.update({
+    where: { id: userId },
+    data: { isOnline: true }
+  });
+
+  socket.on("disconnect", async () => {
+    // 2. Mark User as Offline
+    await prisma.user.update({
+      where: { id: userId },
+      data: { isOnline: false }
+    });
+    console.log("Socket disconnected");
+  });
+});
+
+return io;
 }
