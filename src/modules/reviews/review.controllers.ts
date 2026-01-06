@@ -5,7 +5,7 @@ export class ReviewController {
   static async addReview(req: any, res: Response) {
     try {
       const { requestId, rating, comment } = req.body;
-      const userId = req.user.userId; // From your auth middleware
+      const userId = req.user.userId; 
 
       const review = await ReviewService.createReview(
         userId,

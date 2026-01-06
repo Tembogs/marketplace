@@ -5,8 +5,8 @@ import prisma from "../../config/prisma";
 import { AdminService } from "./admin.services";
 
 export class AdminController {
+  
   // having access to request
-
   static async listRequests(req: AuthRequest, res: Response) {
     const {status, userId, expertId} = req.query
 
@@ -39,7 +39,6 @@ export class AdminController {
     })
 
     // can release expert if choosen
-
     if(request.expertId){
       await prisma.expertProfile.update({
         where: { userId: request.expertId},

@@ -22,3 +22,4 @@ router.get("/accepted", authMiddleware(["USER", "EXPERT"]), RequestController.ge
 
 router.get("/closed", authMiddleware(["USER", "EXPERT"]), RequestController.getClosed);
 export default router;
+

@@ -83,13 +83,14 @@ export class RequestService{
       expertId: null 
     },
     include: {
-      user: { select: { email: true } } // Show who needs help
+      user: { select: { email: true } }
     }
   });
 }
 
 static async acceptRequest(requestId: string, expertId: string) {
   return prisma.$transaction(async (tx) => {
+
     // 1. Check if the request is still available
     const request = await tx.supportRequest.findUnique({
       where: { id: requestId }
@@ -116,7 +117,7 @@ static async acceptRequest(requestId: string, expertId: string) {
       create: { 
         userId: expertId, 
         isAvailable: false,
-        bio: "New Expert" // Provide defaults for required fields
+        bio: "New Expert" 
       }
 });
 
@@ -164,6 +165,7 @@ static async getAcceptedRequests(userId?: string, role?: string,) {
     return prisma.supportRequest.findMany({
       where: {
         status: "ACCEPTED",
+
         // If a userId is provided, filter by their role
         ...(userId && role === "USER" ? { userId } : {}),
         ...(userId && role === "EXPERT" ? { expertId: userId } : {}),
@@ -173,7 +175,7 @@ static async getAcceptedRequests(userId?: string, role?: string,) {
         expert: { select: { email: true } },
       },
       orderBy: {
-        acceptedAt: 'desc' // Most recent first
+        acceptedAt: 'desc'
       }
     });
   }
@@ -183,6 +185,7 @@ static async getAcceptedRequests(userId?: string, role?: string,) {
     return prisma.supportRequest.findMany({
       where: {
         status: "CLOSED",
+
         // If a userId is provided, filter by their role
         ...(userId && role === "USER" ? { userId } : {}),
         ...(userId && role === "EXPERT" ? { expertId: userId } : {}),
@@ -192,7 +195,7 @@ static async getAcceptedRequests(userId?: string, role?: string,) {
         expert: { select: { email: true } },
       },
       orderBy: {
-        closedAt: 'desc' // Most recent first
+        closedAt: 'desc'
       }
     });
   }

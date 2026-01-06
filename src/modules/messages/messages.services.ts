@@ -2,6 +2,7 @@ import prisma from "../../config/prisma";
 import { io } from "../../server";
 export class MessageService {
   static async sendMessage(requestId: string, senderId: string, content: string) {
+    
     //  Verify the request exists and the sender is the User or the assigned Expert
     const request = await prisma.supportRequest.findUnique({
       where: { id: requestId },

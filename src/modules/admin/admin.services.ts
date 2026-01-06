@@ -2,9 +2,11 @@ import prisma from "../../config/prisma";
 import { Role } from "@prisma/client";
 
 export class AdminService {
+  
   // Promote a User to an Expert and initialize their Profile
   static async promoteToExpert(userId: string) {
     return await prisma.$transaction(async (tx) => {
+      
       // 1. Update the User role
       const user = await tx.user.update({
         where: { id: userId },
@@ -14,7 +16,7 @@ export class AdminService {
       // 2. Create the empty Expert Profile so they show up in searches
       await tx.expertProfile.upsert({
         where: { userId: userId },
-        update: {}, // Don't change anything if it exists
+        update: {},
         create: {
           userId: userId,
           bio: "New Expert - Bio pending update",
