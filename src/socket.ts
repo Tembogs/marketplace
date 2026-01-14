@@ -49,7 +49,7 @@ export function intheSocket(server: http.Server) {
         return;
       }
 
-      const userId = socket.data.userId;
+      const userId = socket.data.user.userId;
 
       // requuester or assigned expert
       if(
