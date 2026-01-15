@@ -47,4 +47,44 @@ export class ReviewService {
       return review;
     });
   }
+
+  static async getExpertReviews(expertId: string, page: number = 1, limit: number = 10) {
+  const skip = (page - 1) * limit;
+
+  // We run these in parallel to make the API faster
+  const [reviews, totalCount, aggregateData] = await Promise.all([
+    // 1. Get the actual reviews with the User's name
+    prisma.review.findMany({
+      where: { expertId },
+      include: {
+        reviewer: {
+          select: { email: true, id: true } // Don't return passwords!
+        }
+      },
+      orderBy: { createdAt: 'desc' },
+      skip,
+      take: limit,
+    }),
+
+    // 2. Total count for pagination logic
+    prisma.review.count({ where: { expertId } }),
+
+    // 3. Statistical summary (Company Dashboard style)
+    prisma.review.aggregate({
+      where: { expertId },
+      _avg: { rating: true },
+      _count: { _all: true },
+    })
+  ]);
+
+  return {
+    meta: {
+      total: totalCount,
+      currentPage: page,
+      totalPages: Math.ceil(totalCount / limit),
+      averageRating: aggregateData._avg.rating?.toFixed(1) || 0,
+    },
+    data: reviews
+  };
+}
 }

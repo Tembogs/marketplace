@@ -6,6 +6,6 @@ const router = Router();
 
 router.post("/", authMiddleware(["USER"]), ReviewController.addReview);
 
-// router.get("/expert/:expertId",authMiddleware(["ADMIN"]) ReviewController.getExpertReviews); 
+router.get("/expert/:expertId",authMiddleware(["EXPERT"]), ReviewController.getMyReviews); 
 
 export default router;

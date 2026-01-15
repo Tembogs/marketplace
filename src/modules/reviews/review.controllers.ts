@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { ReviewService } from "./review.services";
+import { AuthRequest } from "../../middlewares/auth.middleware";
 
 export class ReviewController {
   static async addReview(req: any, res: Response) {
@@ -23,6 +24,17 @@ export class ReviewController {
         success: false,
         message: error.message
       });
+    }
+  }
+
+  static async getMyReviews(req: AuthRequest, res: Response) {
+    try {
+      const expertId = req.user!.userId; 
+
+      const reviews = await ReviewService.getExpertReviews(expertId);
+      res.json(reviews);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
     }
   }
 }
