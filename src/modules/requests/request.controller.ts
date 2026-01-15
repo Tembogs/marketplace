@@ -25,7 +25,7 @@ export class RequestController {
     const {id} = req.params;
     const {status} = req.body;
 
-    const updated = await RequestService.transistionRequest(
+    const updated = await RequestService.transitionRequest(
       id,
       req.user!.userId,
       req.user!.role as "USER" | "EXPERT",

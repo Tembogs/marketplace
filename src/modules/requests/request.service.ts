@@ -14,7 +14,7 @@ export class RequestService{
   }
 
 
-  static async transistionRequest(
+  static async transitionRequest(
     requestedId: string,
     userId:string,
     role: 'USER' | "EXPERT",
