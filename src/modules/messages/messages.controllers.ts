@@ -20,13 +20,16 @@ export class MessageController {
     }
   }
 
+
   static async getHistory(req: AuthRequest, res: Response) {
     try {
       const { requestId } = req.params;
-      const messages = await MessageService.getMessages(requestId, req.user!.userId);
-      res.json(messages);
+      const userId = req.user!.userId;
+
+      const history = await MessageService.getChatHistory(requestId, userId);
+      res.json(history);
     } catch (error: any) {
-      res.status(403).json({ message: error.message });
+      res.status(403).json({ error: error.message });
     }
   }
 }

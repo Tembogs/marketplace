@@ -33,22 +33,31 @@ export class MessageService {
     io.to(requestId).emit("new-message", message);
   }
 
-  static async getMessages(requestId: string, userId: string) {
-    // Security check: only the involved parties can see the history
-    const request = await prisma.supportRequest.findUnique({
-      where: { id: requestId }
-    });
+  static async getChatHistory(requestId: string, userId: string) {
+  // 1. Security Check: Is the person asking actually part of this chat?
+  const request = await prisma.supportRequest.findUnique({
+    where: { id: requestId }
+  });
 
-    if (request?.userId !== userId && request?.expertId !== userId) {
-      throw new Error("Unauthorized access to messages");
-    }
-
-    return prisma.message.findMany({
-      where: { requestId },
-      orderBy: { createdAt: 'asc' },
-      include: {
-        sender: { select: { email: true, role: true } }
-      }
-    });
+  if (!request) throw new Error("Chat not found");
+  
+  if (request.userId !== userId && request.expertId !== userId) {
+    throw new Error("Unauthorized access to these messages");
   }
+
+  // 2. Fetch the messages
+  return await prisma.message.findMany({
+    where: { requestId },
+    orderBy: { createdAt: 'asc' }, 
+    include: {
+      sender: {
+        select: {
+          id: true,
+          email: true,
+          role:true
+        }
+      }
+    }
+  });
+}
 }
