@@ -1,9 +1,9 @@
-import express from "express";
+import "dotenv/config";
+import app from "./app";
 import { createServer } from "http";
 import {intheSocket}  from "./socket";
-import "dotenv/config";
 
-const app = express();
+
 const httpServer = createServer(app);
 
 // Initialize Socket.io and export it if needed elsewhere
