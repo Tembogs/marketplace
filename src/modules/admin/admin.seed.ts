@@ -1,10 +1,13 @@
-import { PrismaClient, Role } from '@prisma/client'
-import bcrypt from 'bcryptjs'
 import * as dotenv from 'dotenv';
+import path from 'path';
 
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
-const prisma = new PrismaClient();
+import prisma from '../../config/prisma'; 
+import { Role } from '@prisma/client';
+import bcrypt from 'bcryptjs';
+
+
  async function main() {
   console.log("🚀 Starting admin seeding...");
   
