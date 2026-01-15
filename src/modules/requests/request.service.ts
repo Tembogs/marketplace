@@ -25,6 +25,14 @@ export class RequestService{
         where: {id: requestedId}
       })
       if (!request) throw new Error("Request not found")
+      if (role === 'USER' && request.userId !== userId) {
+        throw new Error("You do not own this request");
+      }
+
+      // 2. If an Expert is trying to transition, they must be the ASSIGNED expert
+      if (role === 'EXPERT' && request.expertId !== userId) {
+        throw new Error("You are not assigned to this request");
+      }
 
         // validating status
         const allowed = allowedTransitions[request.status];
