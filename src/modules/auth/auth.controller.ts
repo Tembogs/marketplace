@@ -20,7 +20,7 @@ export class AuthController {
   static async login(req: Request, res: Response) {
     try {
       const data = loginSchema.parse(req.body);
-      const result = await AuthService.login(data.email, data.password);
+      const result = await AuthService.login(data.email, data.password, data.role);
       res.status(200).json(result);
     } catch (err: any) {
       console.error("❌ LOGIN ERROR:", err);

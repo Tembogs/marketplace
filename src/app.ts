@@ -1,3 +1,4 @@
+import cors from "cors";
 import express from "express";
 import authRoutes from "./modules/auth/auth.routes";
 import adminRoutes from "./modules/admin/admin.routes";
@@ -9,6 +10,10 @@ import expertRoute from "./modules/profiles/profile.routes"
  const app = express();
 
 app.use(express.json());
+app.use(cors({
+  origin: 'http://localhost:3000', 
+  credentials: true,               
+}));;
 
 // Routes
 app.use("/api/auth", authRoutes);
@@ -16,7 +21,7 @@ app.use("/api/admin", adminRoutes)
 app.use("/api/request", requestRoutes)
 app.use("/api/message",messageRoute )
 app.use("/api/review", reviewRoute)
-app.use("/api/expert", expertRoute)
+app.use("/api/profile", expertRoute)
 
 export default app;
 

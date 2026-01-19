@@ -53,7 +53,22 @@ static async accept(req: AuthRequest, res: Response) {
 static async close(req: AuthRequest, res: Response) {
   try {
     const { id } = req.params;
+    
+    // 1. Your existing service call
     const updated = await RequestService.closeRequest(id, req.user!.userId);
+
+    // 2. Get the socket instance from the app
+    const io = req.app.get("io"); 
+
+    // 3. Notify the room. 
+    // The client dashboard is listening for "session-closed"
+    if (io) {
+      io.to(id).emit("session-closed", {
+        requestId: id,
+        status: "CLOSED"
+      });
+    }
+
     res.json(updated);
   } catch (error: any) {
     res.status(400).json({ message: error.message });
