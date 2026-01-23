@@ -1,6 +1,6 @@
 import { Response } from "express";
-import { AuthRequest } from "../../middlewares/auth.middleware";
-import { ProfileService } from "./profile.services";
+import { AuthRequest } from "../../middlewares/auth.middleware.js";
+import { ProfileService } from "./profile.services.js";
 
 export class ProfileController {
   static async update(req: AuthRequest, res: Response) {
@@ -19,5 +19,14 @@ export class ProfileController {
     } catch (error: any) {
       res.status(404).json({ message: error.message });
     }
+  }
+
+  static async getUserProfile(req: AuthRequest, res: Response) {
+      try {
+        const profile = await ProfileService.getUserProfile(req.params.id);
+        res.json(profile);
+      } catch (error: any) {
+        res.status(404).json({ message: error.message });
+      }
   }
 }

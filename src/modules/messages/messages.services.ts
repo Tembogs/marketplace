@@ -1,5 +1,5 @@
-import prisma from "../../config/prisma";
-import { io } from "../../server";
+import prisma from "../../config/prisma.js";
+import { io } from "../../server.js";
 export class MessageService {
   static async sendMessage(requestId: string, senderId: string, content: string) {
     

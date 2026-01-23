@@ -1,7 +1,7 @@
 import {Request, Response, NextFunction} from "express"
 import jwt from "jsonwebtoken"
 
-const JWT_SECRET = process.env.JWT_SECRET || "supersecret"
+const JWT_SECRET = process.env.JWT_SECRET 
 
 export interface AuthRequest extends Request {
   user?: {userId:string, role:string};
@@ -17,8 +17,15 @@ export const authMiddleware = (roles: string[] = []) => {
     if (!token) return res.status(401).json({ message: "Token missing" });
 
     try {
-      const decoded = jwt.verify(token, JWT_SECRET) as { userId: string, role: string };
+      const decoded = jwt.verify(token, JWT_SECRET!) as unknown as { 
+    userId: string, 
+    role: "USER" | "EXPERT" | "ADMIN" 
+  };
       req.user = decoded;
+
+      console.log("--- AUTH DEBUG ---");
+      console.log("User Role in Token:", decoded.role);
+      console.log("Required Roles for Route:", roles);
 
       if (roles.length && !roles.includes(decoded.role)) {
         return res.status(403).json({ message: "Forbidden: Insufficient permissions" });

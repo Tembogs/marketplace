@@ -1,10 +1,12 @@
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET as string;
+const JWT_SECRET = process.env.JWT_SECRET!;
 
-export function verifyToken(token: string) {
-  return jwt.verify(token, JWT_SECRET) as {
-    userId: string;
-    role: "USER" | "EXPERT" | "ADMIN";
-  };
+interface TokenPayload {
+  userId: string;
+  role: "USER" | "EXPERT" | "ADMIN";
+}
+
+export function verifyToken(token: string): TokenPayload {
+  return jwt.verify(token, JWT_SECRET) as unknown as TokenPayload;
 }

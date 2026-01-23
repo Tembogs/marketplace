@@ -1,7 +1,7 @@
 
 import { Router } from "express";
-import { RequestController } from "./request.controller";
-import { authMiddleware } from "../../middlewares/auth.middleware";
+import { RequestController } from "./request.controller.js";
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
 
 
 const router = Router();
@@ -21,5 +21,7 @@ router.post("/:id/reject", authMiddleware(["EXPERT"]), RequestController.reject)
 router.get("/accepted", authMiddleware(["USER", "EXPERT"]), RequestController.getAccepted);
 
 router.get("/closed", authMiddleware(["USER", "EXPERT"]), RequestController.getClosed);
+
+router.post("/:id/cancel", authMiddleware(["USER"]), RequestController.cancel);
 export default router;
 

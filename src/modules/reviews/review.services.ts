@@ -1,4 +1,4 @@
-import prisma from "../../config/prisma";
+import prisma from "../../config/prisma.js";
 
 export class ReviewService {
   static async createReview(userId: string, requestId: string, rating: number, comment?: string) {
@@ -48,17 +48,19 @@ export class ReviewService {
     });
   }
 
-  static async getExpertReviews(expertId: string, page: number = 1, limit: number = 10) {
+  static async getExpertReviews(expertId: string, page: number = 1, limit: number = 10 , comment?: string) {
   const skip = (page - 1) * limit;
-
-  // We run these in parallel to make the API faster
+  const where: any = { 
+          expertId,
+          ...(comment ? { comment: { contains: comment, mode: 'insensitive' } } : {})
+        };
   const [reviews, totalCount, aggregateData] = await Promise.all([
     // 1. Get the actual reviews with the User's name
     prisma.review.findMany({
-      where: { expertId },
+      where: where,
       include: {
         reviewer: {
-          select: { email: true, id: true } // Don't return passwords!
+          select: { email: true, id: true } 
         }
       },
       orderBy: { createdAt: 'desc' },
@@ -67,7 +69,7 @@ export class ReviewService {
     }),
 
     // 2. Total count for pagination logic
-    prisma.review.count({ where: { expertId } }),
+    prisma.review.count({ where: where }),
 
     // 3. Statistical summary (Company Dashboard style)
     prisma.review.aggregate({

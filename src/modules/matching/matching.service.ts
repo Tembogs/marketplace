@@ -1,4 +1,4 @@
-import prisma from "../../config/prisma"
+import prisma from "../../config/prisma.js"
 import { RequestStatus, Role } from "@prisma/client"
 
 
@@ -8,7 +8,8 @@ export class MatchingService {
    return prisma.expertProfile.findFirst({
     where:{isAvailable:true,
             user:{
-              role:Role.EXPERT
+              role:Role.EXPERT,
+              isOnline: true
             }
     },
     orderBy:{
@@ -21,7 +22,10 @@ export class MatchingService {
   static async assignExpertToRequest(requestId:string) {
     return prisma.$transaction(async (tx) => {
       const expert = await tx.expertProfile.findFirst({
-        where:{isAvailable: true},
+        where:{
+          isAvailable: true,
+          user: { isOnline: true }
+        },
         include:{user: true}
       })
 
@@ -36,6 +40,10 @@ export class MatchingService {
           expertId:expert.userId,
           status:RequestStatus.ACCEPTED,
           acceptedAt:new Date()
+        },
+        include: {
+          user: { select: { email: true } },
+          expert: { select: { email: true } }
         }
       });
 

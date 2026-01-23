@@ -1,6 +1,6 @@
-import prisma from "../../config/prisma"
+import prisma from "../../config/prisma.js"
 import { RequestStatus } from "@prisma/client"
-import { allowedTransitions } from "./request.state"
+import { allowedTransitions } from "./request.state.js"
 
 
 export class RequestService{
@@ -22,7 +22,8 @@ export class RequestService{
   ) {
     return prisma.$transaction(async (txt) => {
       const request = await txt.supportRequest.findUnique({
-        where: {id: requestedId}
+        where: {id: requestedId},
+        include: { user: { select: { email: true, name: true } } }
       })
       if (!request) throw new Error("Request not found")
       if (role === 'USER' && request.userId !== userId) {
@@ -101,7 +102,8 @@ static async acceptRequest(requestId: string, expertId: string) {
 
     // 1. Check if the request is still available
     const request = await tx.supportRequest.findUnique({
-      where: { id: requestId }
+      where: { id: requestId },
+      include: { user: { select: { email: true, name: true } } }
     });
 
     if (!request || request.status !== "REQUESTED") {
@@ -115,7 +117,16 @@ static async acceptRequest(requestId: string, expertId: string) {
         status: "ACCEPTED",
         expertId: expertId,
         acceptedAt: new Date()
+      },
+      include: { 
+      user: {
+        select: {
+          id: true,
+          email: true,
+          name: true
+        }
       }
+    }
     });
 
     // 3. Set the expert to "Busy"

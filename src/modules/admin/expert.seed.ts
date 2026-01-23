@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 import path from 'path';
 
 dotenv.config();
-import prisma from "../../config/prisma"
+import prisma from "../../config/prisma.js"
 import { Role } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 

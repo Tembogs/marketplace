@@ -1,4 +1,4 @@
-import prisma from "../../config/prisma";
+import prisma from "../../config/prisma.js";
 
 export class ProfileService {
   // Update expert bio and skills
@@ -54,4 +54,19 @@ export class ProfileService {
 
     return { ...profile, calculatedRating: avg.toFixed(1) };
   }
-}
+
+  static async getUserProfile(userId: string) {
+    const profile = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        email: true,
+        name: true,
+        role: true,
+      },
+    });
+
+    if (!profile) throw new Error("Profile not found");
+
+    return profile;
+  }
+  }
