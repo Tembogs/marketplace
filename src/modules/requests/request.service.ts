@@ -1,7 +1,7 @@
 import prisma from "../../config/prisma.js"
 import { RequestStatus } from "@prisma/client"
 import { allowedTransitions } from "./request.state.js"
-
+import { Prisma } from "@prisma/client";
 
 export class RequestService{
   static async createRequest(userId: string) {
@@ -20,7 +20,7 @@ export class RequestService{
     role: 'USER' | "EXPERT",
     nextStatus: RequestStatus
   ) {
-    return prisma.$transaction(async (txt) => {
+    return prisma.$transaction(async (txt:Prisma.TransactionClient) => {
       const request = await txt.supportRequest.findUnique({
         where: {id: requestedId},
         include: { user: { select: { email: true, name: true } } }
@@ -98,7 +98,7 @@ export class RequestService{
 }
 
 static async acceptRequest(requestId: string, expertId: string) {
-  return prisma.$transaction(async (tx) => {
+  return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
 
     // 1. Check if the request is still available
     const request = await tx.supportRequest.findUnique({
@@ -152,7 +152,7 @@ static async rejectRequest(requestId: string) {
 }
 
 static async closeRequest(requestId: string, expertId: string) {
-  return prisma.$transaction(async (tx) => {
+  return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     const request = await tx.supportRequest.findUnique({
       where: { id: requestId }
     });

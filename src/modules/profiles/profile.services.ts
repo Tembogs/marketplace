@@ -49,7 +49,7 @@ export class ProfileService {
     // Calculate actual average from the Reviews table
     const reviews = profile.user.reviewsReceived;
     const avg = reviews.length > 0 
-      ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length 
+      ? reviews.reduce((sum:number, r:any) => sum + r.rating, 0) / reviews.length 
       : 0;
 
     return { ...profile, calculatedRating: avg.toFixed(1) };
