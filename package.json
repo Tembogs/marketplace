@@ -15,8 +15,8 @@
     "start": "node dist/server.js"
   },
   "dependencies": {
+    "@prisma/client": "^7.2.0",
     "@prisma/internals": "^7.2.0",
-    "@prisma/client": "^7.3.0",
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
@@ -35,7 +35,7 @@
     "dotenv": "^17.2.3",
     "nodemon": "^3.1.11",
     "pg": "^8.16.3",
-    "prisma": "^7.2.0",
+    "prisma": "^6.19.2",
     "socket.io": "^4.8.1",
     "ts-node": "^1.7.1",
     "tsx": "^4.21.0",
