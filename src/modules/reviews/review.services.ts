@@ -1,8 +1,9 @@
 import prisma from "../../config/prisma.js";
+import { Prisma } from "@prisma/client";
 
 export class ReviewService {
   static async createReview(userId: string, requestId: string, rating: number, comment?: string) {
-    return await prisma.$transaction(async (tx) => {
+    return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // 1. Verify the request
       const request = await tx.supportRequest.findUnique({
         where: { id: requestId }

@@ -1,11 +1,12 @@
 import prisma from "../../config/prisma.js";
 import { Role } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 export class AdminService {
   
   // Promote a User to an Expert and initialize their Profile
   static async promoteToExpert(userId: string) {
-    return await prisma.$transaction(async (tx) => {
+    return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       
       // 1. Update the User role
       const user = await tx.user.update({

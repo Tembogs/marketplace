@@ -51,7 +51,7 @@ export class AdminController {
   // see all the expert stats
     static async expertStats(req: AuthRequest, res: Response) {
   try {
-    const stats = await prisma.expertProfile.findMany({
+    const stats: any[] = await prisma.expertProfile.findMany({
       include: {
         user: {
           select: {
@@ -64,7 +64,7 @@ export class AdminController {
       }
     });
 
-    const result = stats.map((expert) => ({
+    const result = stats.map((expert: any) => ({
       expertId: expert.userId,
       email: expert.user.email,
       totalSessions: expert.user._count.assigned, 
