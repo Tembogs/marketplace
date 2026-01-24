@@ -10,7 +10,7 @@
     "#config/*": "./src/config/*"
   },
   "scripts": {
-    "dev": "nodemon",
+    "dev": "npx tsx src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js"
   },
