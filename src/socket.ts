@@ -46,10 +46,14 @@ export function intheSocket(server: http.Server) {
     socket.join(`user_${userId}`);
 
     // Set user to Online in DB
-    await prisma.user.update({
-      where: { id: userId },
-      data: { isOnline: true }
-    });
+    try {
+      await prisma.user.update({
+        where: { id: userId },
+        data: { isOnline: true }
+      });
+    } catch (error) {
+      console.error('Error updating user online status:', error);
+    }
 
     // A. JOIN ROOM LOGIC
     socket.on("join-request", async (requestId: string) => {
@@ -82,10 +86,14 @@ export function intheSocket(server: http.Server) {
 
     // C. DISCONNECT LOGIC
     socket.on("disconnect", async () => {
-      await prisma.user.update({
-        where: { id: userId },
-        data: { isOnline: false }
-      });
+      try {
+        await prisma.user.update({
+          where: { id: userId },
+          data: { isOnline: false }
+        });
+      } catch (error) {
+        console.error('Error updating user offline status:', error);
+      }
       console.log("❌ Socket disconnected:", userId);
     });
   });
