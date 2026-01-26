@@ -2,7 +2,7 @@ import {Response} from "express";
 import { RequestService } from "./request.service.js";
 import { AuthRequest } from "../../middlewares/auth.middleware.js";
 import { MatchingService } from "../matching/matching.service.js";
-import prisma from "#config/prisma.js";
+import prisma from "../../config/prisma.js";
 
 export class RequestController {
   static async create(req: AuthRequest, res:Response){

@@ -1,6 +1,6 @@
 import { RequestService } from "./request.service.js";
 import { MatchingService } from "../matching/matching.service.js";
-import prisma from "#config/prisma.js";
+import prisma from "../../config/prisma.js";
 export class RequestController {
     static async create(req, res) {
         try {

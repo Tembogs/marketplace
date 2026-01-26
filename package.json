@@ -6,9 +6,6 @@
   "license": "ISC",
   "author": "Tembogs",
   "main": "app.js",
-  "imports": {
-    "#config/*": "./src/config/*"
-  },
   "scripts": {
     "dev": "nodemon",
     "build": "tsc && prisma generate",
