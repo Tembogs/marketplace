@@ -51,8 +51,13 @@ export function intheSocket(server: http.Server) {
         where: { id: userId },
         data: { isOnline: true }
       });
-    } catch (error) {
-      console.error('Error updating user online status:', error);
+    } catch (error: any) {
+      console.error('Error updating user online status:', {
+        message: error?.message,
+        code: error?.code,
+        meta: error?.meta,
+        fullError: error
+      });
     }
 
     // A. JOIN ROOM LOGIC
@@ -91,8 +96,13 @@ export function intheSocket(server: http.Server) {
           where: { id: userId },
           data: { isOnline: false }
         });
-      } catch (error) {
-        console.error('Error updating user offline status:', error);
+      } catch (error: any) {
+        console.error('Error updating user offline status:', {
+          message: error?.message,
+          code: error?.code,
+          meta: error?.meta,
+          fullError: error
+        });
       }
       console.log("❌ Socket disconnected:", userId);
     });
