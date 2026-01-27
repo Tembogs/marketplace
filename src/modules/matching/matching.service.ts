@@ -1,5 +1,5 @@
 import prisma from "../../config/prisma.js"
-import { RequestStatus, Role } from "@prisma/client"
+import { RequestStatus, Role } from "../../generated/prisma/client.js";
 
 
 export class MatchingService {

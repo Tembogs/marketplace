@@ -1,6 +1,6 @@
 import prisma from "../../config/prisma.js";
-import { Role } from "@prisma/client";
-import { Prisma } from "@prisma/client";
+import { Role } from "../../generated/prisma/client.js";
+import { Prisma } from "../../generated/prisma/client.js";
 
 export class AdminService {
   

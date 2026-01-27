@@ -4,7 +4,7 @@ import path from 'path';
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
 import prisma from '../../config/prisma.js'; 
-import { Role } from '@prisma/client';
+import { Role } from "../../generated/prisma/client.js";
 import bcrypt from 'bcryptjs';
 
 

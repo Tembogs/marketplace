@@ -1,7 +1,7 @@
 import prisma from "../../config/prisma.js"
 import { RequestStatus } from "@prisma/client"
 import { allowedTransitions } from "./request.state.js"
-import { Prisma } from "@prisma/client";
+import { Prisma } from "../../generated/prisma/client.js";
 
 export class RequestService{
   static async createRequest(userId: string) {
