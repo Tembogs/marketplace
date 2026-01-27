@@ -8,7 +8,7 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon",
-    "build": "tsc && prisma generate",
+    "build": "prisma generate && prisma migrate deploy && tsc",
     "start": "node dist/src/server.js",
     "postinstall": "prisma generate",
     "test": "jest",
