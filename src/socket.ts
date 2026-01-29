@@ -39,11 +39,19 @@ export function intheSocket(server: http.Server) {
     }
   });
 
+  
+
   // 2. Main Connection Handler
   io.on("connection", async (socket) => {
     const userId = socket.data.user.userId;
     console.log('✅ Socket connected:', userId);
     socket.join(`user_${userId}`);
+
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    console.log('findUnique result:', existingUser);
 
     // Set user to Online in DB
     try {
