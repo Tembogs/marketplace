@@ -1,15 +1,23 @@
-import * as dotenv from 'dotenv';
-import path from 'path';
-
-dotenv.config();
+import 'dotenv/config';
 import prisma from "../../config/prisma.js"
-import { Role } from "../../generated/prisma/client.js";
+import Prisma from "../../generated/prisma/client.js";
 import bcrypt from 'bcryptjs';
 
+const { Role } = Prisma;
 
 async function main() {
   console.log("🚀 Starting expert seeding...");
-  const email = "expert2@marketplace.com"
+
+  // 🔍 Connection test
+  try {
+    const ping = await prisma.$queryRaw`SELECT 1`;
+    console.log("Ping result:", ping);
+  } catch (e) {
+    console.error("❌ SELECT 1 failed:", e);
+    throw e; // stop here if even SELECT 1 fails
+  }
+
+  const email = "expert2@marketplace.com";
   const defaultName = email.split('@')[0];
 
   const passwordHash = await bcrypt.hash('ExpertPassword123', 10);
