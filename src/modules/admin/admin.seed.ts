@@ -1,9 +1,9 @@
 import 'dotenv/config';
 import prisma from '../../config/prisma.js'; 
-import * as PrismaModule from "../../generated/prisma/client.js";
+import pkg from "../../generated/prisma/enums.js";
 import bcrypt from 'bcryptjs';
 
-const Role = PrismaModule.Role;
+const { Role } = pkg;
  async function main() {
   console.log("🚀 Starting admin seeding...");
   const email =  'admin@marketplace.com'
