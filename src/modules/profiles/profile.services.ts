@@ -1,9 +1,10 @@
 import prisma from "../../config/prisma.js";
+import { Prisma } from "../../generated/prisma/client.js";
 
 export class ProfileService {
   // Update expert bio and skills
   static async updateProfile(userId: string, data: { bio: string; skills: string[] }) {
-    return prisma.$transaction(async (tx) => {
+    return prisma.$transaction(async (tx:Prisma.TransactionClient) => {
      
       // 1. Update/Create the profile & bio
       const profile = await tx.expertProfile.upsert({

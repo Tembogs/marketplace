@@ -1,13 +1,9 @@
-import * as dotenv from 'dotenv';
-import path from 'path';
-
-dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
-
+import 'dotenv/config';
 import prisma from '../../config/prisma.js'; 
-import { Role } from "../../generated/prisma/client.js";
+import * as PrismaModule from "../../generated/prisma/client.js";
 import bcrypt from 'bcryptjs';
 
-
+const Role = PrismaModule.Role;
  async function main() {
   console.log("🚀 Starting admin seeding...");
   const email =  'admin@marketplace.com'

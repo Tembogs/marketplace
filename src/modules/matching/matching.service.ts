@@ -1,5 +1,5 @@
 import prisma from "../../config/prisma.js"
-import { RequestStatus, Role } from "../../generated/prisma/client.js";
+import { Prisma, RequestStatus, Role } from "../../generated/prisma/client.js";
 
 
 export class MatchingService {
@@ -20,7 +20,7 @@ export class MatchingService {
 
   // getting available expert to chat request
   static async assignExpertToRequest(requestId:string) {
-    return prisma.$transaction(async (tx) => {
+    return prisma.$transaction(async (tx:Prisma.TransactionClient) => {
       const expert = await tx.expertProfile.findFirst({
         where:{
           isAvailable: true,

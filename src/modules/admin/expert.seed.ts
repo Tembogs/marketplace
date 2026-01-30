@@ -1,12 +1,13 @@
 import 'dotenv/config';
 import prisma from "../../config/prisma.js"
-import Prisma from "../../generated/prisma/client.js";
+import { Role } from "../../../generated/prisma/client.js";
 import bcrypt from 'bcryptjs';
 
-const { Role } = Prisma;
 
 async function main() {
   console.log("🚀 Starting expert seeding...");
+ 
+
 
   // 🔍 Connection test
   try {
